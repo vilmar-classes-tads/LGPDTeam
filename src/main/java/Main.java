@@ -1,6 +1,4 @@
 import dto.CadastroServidorRequest;
-import dto.CadastroServidorResponse;
-import dto.ErroResponse;
 
 public class Main {
     public static void main(String[] args) {
