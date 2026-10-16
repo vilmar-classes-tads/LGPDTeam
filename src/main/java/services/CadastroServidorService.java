@@ -4,12 +4,15 @@ import dto.CadastroServidorRequest;
 import dto.CadastroServidorResponse;
 import exceptions.ValidacaoException;
 import models.entities.Servidor;
+import models.enums.Perfil;
 import models.enums.Sexo;
 import models.enums.Titulacao;
 import org.springframework.stereotype.Service;
 import repository.ServidorRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.text.Normalizer;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +20,7 @@ import java.util.Map;
 @Service
 public class CadastroServidorService {
 
+    private static final BCryptPasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
     private final ServidorRepository repository;
 
     public CadastroServidorService(ServidorRepository repository) {
@@ -42,7 +46,11 @@ public class CadastroServidorService {
 
         if (vazio(req.email())) erros.put("email", "E-mail institucional é obrigatório.");
 
-        if (vazio(req.senha())) erros.put("senha", "Senha é obrigatória.");
+        if (vazio(req.senha())) {
+            erros.put("senha", "Senha é obrigatória.");
+        } else if (req.senha().length() < 6) {
+            erros.put("senha", "A senha deve ter no mínimo 6 caracteres.");
+        }
 
         Titulacao titulacao = null;
         if (vazio(req.titulacao())) {
@@ -51,8 +59,6 @@ public class CadastroServidorService {
             titulacao = converterEnum(Titulacao.class, req.titulacao());
             if (titulacao == null) erros.put("titulacao", "Titulação inválida.");
         }
-
-        //Precisa verificar se o ajuste de Titulação para Lista modifica algo em como o dto lida com o dado na persistência
 
         Sexo sexo = null;
         if (!vazio(req.sexo())) {
@@ -68,7 +74,7 @@ public class CadastroServidorService {
         s.setNomeCompleto(req.nomeCompleto().trim());
         s.setCpf(req.cpf().trim());
         s.setEmail(req.email().trim());
-        s.setSenhaHash(req.senha());
+        s.setSenhaHash(PASSWORD_ENCODER.encode(req.senha()));
         s.setCampus(req.campus().trim());
         s.setAreaFormacao(req.areaFormacao().trim());
         if (titulacao != null) {
@@ -84,8 +90,12 @@ public class CadastroServidorService {
         if (!vazio(req.telefone())) {
             s.setTelefone(req.telefone().trim());
         }
+        s.setPerfis(new HashSet<>(List.of(Perfil.ROLE_COORDENADOR, Perfil.ROLE_AVALIADOR)));
 
-        repository.inserir(s);
+        Map<String, String> errosUnicidade = repository.inserirSeUnico(s);
+        if (!errosUnicidade.isEmpty()) {
+            throw new ValidacaoException(errosUnicidade);
+        }
 
         return new CadastroServidorResponse(
                 s.getNomeCompleto(), s.getCpf(), s.getEmail(), s.getPerfis(), true, "Cadastro realizado.");

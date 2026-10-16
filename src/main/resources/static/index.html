@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastro de servidor</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/cadastro.js" defer></script>
+</head>
+<body>
+<main class="card">
+    <p class="eyebrow">Academy Registry</p>
+    <h1>Cadastro de servidor</h1>
+    <p class="intro">Informe seus dados pessoais e institucionais para criar seu cadastro.</p>
+    <div id="mensagem" class="message error" role="alert" hidden></div>
+    <form id="cadastro-form">
+        <div class="grid">
+            <label>Nome completo
+                <input name="nomeCompleto" autocomplete="name" required>
+                <span class="field-error" data-error-for="nomeCompleto"></span>
+            </label>
+            <label>Nome social <span class="optional">(opcional)</span>
+                <input name="nomeSocial">
+                <span class="field-error" data-error-for="nomeSocial"></span>
+            </label>
+            <label>CPF
+                <input name="cpf" autocomplete="off" required>
+                <span class="field-error" data-error-for="cpf"></span>
+            </label>
+            <label>E-mail institucional
+                <input name="email" type="email" autocomplete="email" required>
+                <span class="field-error" data-error-for="email"></span>
+            </label>
+            <label>Senha
+                <input name="senha" type="password" minlength="6" autocomplete="new-password" required>
+                <span class="field-error" data-error-for="senha"></span>
+            </label>
+            <label>Campus
+                <input name="campus" required>
+                <span class="field-error" data-error-for="campus"></span>
+            </label>
+            <label>Área de formação
+                <input name="areaFormacao" required>
+                <span class="field-error" data-error-for="areaFormacao"></span>
+            </label>
+            <label>Titulação
+                <select name="titulacao" required>
+                    <option value="">Selecione</option>
+                    <option value="GRADUACAO">Graduação</option>
+                    <option value="ESPECIALIZACAO">Especialização</option>
+                    <option value="MESTRADO">Mestrado</option>
+                    <option value="DOUTORADO">Doutorado</option>
+                    <option value="POS_DOUTORADO">Pós-doutorado</option>
+                </select>
+                <span class="field-error" data-error-for="titulacao"></span>
+            </label>
+            <label>Sexo <span class="optional">(opcional)</span>
+                <select name="sexo">
+                    <option value="">Prefiro não informar</option>
+                    <option value="FEMININO">Feminino</option>
+                    <option value="MASCULINO">Masculino</option>
+                    <option value="OUTRO">Outro</option>
+                </select>
+                <span class="field-error" data-error-for="sexo"></span>
+            </label>
+            <label>Currículo Lattes <span class="optional">(opcional)</span>
+                <input name="lattes" type="url" placeholder="https://lattes.cnpq.br/...">
+                <span class="field-error" data-error-for="lattes"></span>
+            </label>
+            <label>Telefone <span class="optional">(opcional)</span>
+                <input name="telefone" type="tel" autocomplete="tel">
+                <span class="field-error" data-error-for="telefone"></span>
+            </label>
+        </div>
+        <button type="submit">Criar cadastro</button>
+    </form>
+    <p class="footer">Já possui cadastro? <a href="/login">Ir para login</a></p>
+</main>
+</body>
+</html>

@@ -126,12 +126,12 @@ public class Servidor {
         r.setSenhaHash(senhaHash);
         r.setCampus(campus);
         r.setAreaFormacao(areaFormacao);
-        r.setTitulacao(titulacao);
+        r.setTitulacao(titulacao == null ? null : List.copyOf(titulacao));
         r.setNomeSocial(nomeSocial);
         r.setSexo(sexo);
         r.setLattes(lattes);
         r.setTelefone(telefone);
-        r.setPerfis(perfis);
+        r.setPerfis(new HashSet<>(perfis));
         return r;
     }
 }

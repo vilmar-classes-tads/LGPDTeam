@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<main class="card login-card">
+    <p class="eyebrow">Academy Registry</p>
+    <h1>Login</h1>
+    <div id="sucesso" class="message success" role="status" hidden></div>
+    <p>A autenticação ainda não está disponível nesta versão.</p>
+    <a class="button-link" href="/">Voltar ao cadastro</a>
+</main>
+<script>
+    if (new URLSearchParams(window.location.search).get("cadastro") === "sucesso") {
+        const mensagem = document.getElementById("sucesso");
+        mensagem.textContent = "Cadastro realizado com sucesso. Seus dados foram registrados.";
+        mensagem.hidden = false;
+    }
+</script>
+</body>
+</html>

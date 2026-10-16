@@ -2,7 +2,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import dto.CadastroServidorRequest;
 
-@SpringBootApplication(scanBasePackages = {"dto", "models", "repository", "services"})
+@SpringBootApplication(scanBasePackages = {"controller", "dto", "exceptions", "models", "repository", "services"})
 public class Main {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
