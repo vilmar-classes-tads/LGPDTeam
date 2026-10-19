@@ -14,7 +14,6 @@ public class ServidorRepository {
             servidores = new ArrayList<>();
         }
 
-        /** Insere e devolve o ID gerado. Lança se CPF/e-mail já existirem (race condition). */
         public void inserir(Servidor s) {
             servidores.add(s);
         }
@@ -37,6 +36,10 @@ public class ServidorRepository {
                     s.setCampus(serv.getCampus());
                     s.setAreaFormacao(serv.getAreaFormacao());
                     s.setTitulacao(serv.getTitulacao());
+                    s.setNomeSocial(serv.getNomeSocial());
+                    s.setSexo(serv.getSexo());
+                    s.setLattes(serv.getLattes());
+                    s.setTelefone(serv.getTelefone());
                     s.setPerfis(serv.getPerfis());
                 }
             }

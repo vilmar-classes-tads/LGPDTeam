@@ -8,9 +8,9 @@ public record CadastroServidorRequest(
         String campus,
         String areaFormacao,
         String titulacao,
-        String perfis
+        String nomeSocial,
+        String sexo,
+        String lattes,
+        String telefone
 ) {
-    public String senhaHash() {
-        return senha;
-    }
 }

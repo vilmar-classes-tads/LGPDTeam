@@ -1,6 +1,7 @@
 package models.entities;
 
 import models.enums.Perfil;
+import models.enums.Sexo;
 import models.enums.Titulacao;
 
 import java.util.HashSet;
@@ -15,7 +16,11 @@ public class Servidor {
     private String campus;
     private String areaFormacao;
     private List<Titulacao> titulacao;
-    private Set<Perfil> perfis = new HashSet<>();
+    private String nomeSocial;
+    private Sexo sexo;
+    private String lattes;
+    private String telefone;
+    private HashSet<Perfil> perfis = new HashSet<>();
 
     public String getNomeCompleto() {
         return nomeCompleto;
@@ -73,30 +78,60 @@ public class Servidor {
         this.titulacao = titulacao;
     }
 
-    public void setTitulacao(Titulacao titulacao) {
-        this.titulacao = titulacao == null ? null : List.of(titulacao);
+    public String getNomeSocial() {
+        return nomeSocial;
     }
 
-    public Set<Perfil> getPerfis() {
+    public void setNomeSocial(String nomeSocial) {
+        this.nomeSocial = nomeSocial;
+    }
+
+    public Sexo getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(Sexo sexo) {
+        this.sexo = sexo;
+    }
+
+    public String getLattes() {
+        return lattes;
+    }
+
+    public void setLattes(String lattes) {
+        this.lattes = lattes;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public HashSet<Perfil> getPerfis() {
         return perfis;
     }
 
-    public void setPerfis(Set<Perfil> perfis) {
-        this.perfis = perfis == null ? new HashSet<>() : new HashSet<>(perfis);
+    public void setPerfis(HashSet<Perfil> perfis) {
+        this.perfis = perfis;
     }
 
-    public Servidor selfReplicate(){
-
-        Servidor replica = new Servidor();
-
-        replica.setCpf(this.getCpf());
-        replica.setNomeCompleto(this.getNomeCompleto());
-        replica.setEmail(this.getEmail());
-        replica.setSenhaHash(this.getSenhaHash());
-        replica.setAreaFormacao(this.getAreaFormacao());
-        replica.setCampus(this.getCampus());
-        replica.setTitulacao(this.getTitulacao());
-
-        return replica;
+    public Servidor selfReplicate() {
+        Servidor r = new Servidor();
+        r.setCpf(cpf);
+        r.setNomeCompleto(nomeCompleto);
+        r.setEmail(email);
+        r.setSenhaHash(senhaHash);
+        r.setCampus(campus);
+        r.setAreaFormacao(areaFormacao);
+        r.setTitulacao(titulacao);
+        r.setNomeSocial(nomeSocial);
+        r.setSexo(sexo);
+        r.setLattes(lattes);
+        r.setTelefone(telefone);
+        r.setPerfis(perfis);
+        return r;
     }
 }

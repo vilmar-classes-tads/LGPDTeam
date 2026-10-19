@@ -4,12 +4,14 @@ import dto.CadastroServidorRequest;
 import dto.CadastroServidorResponse;
 import exceptions.ValidacaoException;
 import models.entities.Servidor;
+import models.enums.Sexo;
 import models.enums.Titulacao;
 import org.springframework.stereotype.Service;
 import repository.ServidorRepository;
 
 import java.text.Normalizer;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -50,6 +52,14 @@ public class CadastroServidorService {
             if (titulacao == null) erros.put("titulacao", "Titulação inválida.");
         }
 
+        //Precisa verificar se o ajuste de Titulação para Lista modifica algo em como o dto lida com o dado na persistência
+
+        Sexo sexo = null;
+        if (!vazio(req.sexo())) {
+            sexo = converterEnum(Sexo.class, req.sexo());
+            if (sexo == null) erros.put("sexo", "Sexo inválido.");
+        }
+
         if (!erros.isEmpty()) {
             throw new ValidacaoException(erros);
         }
@@ -61,7 +71,19 @@ public class CadastroServidorService {
         s.setSenhaHash(req.senha());
         s.setCampus(req.campus().trim());
         s.setAreaFormacao(req.areaFormacao().trim());
-        s.setTitulacao(titulacao);
+        if (titulacao != null) {
+            s.setTitulacao(List.of(titulacao));
+        }
+        if (!vazio(req.nomeSocial())) {
+            s.setNomeSocial(req.nomeSocial().trim());
+        }
+        s.setSexo(sexo);
+        if (!vazio(req.lattes())) {
+            s.setLattes(req.lattes().trim());
+        }
+        if (!vazio(req.telefone())) {
+            s.setTelefone(req.telefone().trim());
+        }
 
         repository.inserir(s);
 
