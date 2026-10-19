@@ -73,12 +73,16 @@ public class Servidor {
         this.titulacao = titulacao;
     }
 
+    public void setTitulacao(Titulacao titulacao) {
+        this.titulacao = titulacao == null ? null : List.of(titulacao);
+    }
+
     public Set<Perfil> getPerfis() {
         return perfis;
     }
 
     public void setPerfis(Set<Perfil> perfis) {
-        this.perfis = perfis;
+        this.perfis = perfis == null ? new HashSet<>() : new HashSet<>(perfis);
     }
 
     public Servidor selfReplicate(){

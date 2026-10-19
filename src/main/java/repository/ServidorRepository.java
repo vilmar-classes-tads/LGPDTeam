@@ -1,8 +1,11 @@
 package repository;
 
 import models.entities.Servidor;
+import org.springframework.stereotype.Repository;
+
 import java.util.*;
 
+@Repository
 public class ServidorRepository {
 
         private static List<Servidor> servidores;
