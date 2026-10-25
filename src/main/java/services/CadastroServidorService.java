@@ -8,6 +8,7 @@ import models.enums.Sexo;
 import models.enums.Titulacao;
 import org.springframework.stereotype.Service;
 import repository.ServidorRepository;
+import validations.CpfValidator;
 
 import java.text.Normalizer;
 import java.util.LinkedHashMap;
@@ -38,7 +39,13 @@ public class CadastroServidorService {
         if (vazio(req.campus()))       erros.put("campus", "Campus é obrigatório.");
         if (vazio(req.areaFormacao())) erros.put("areaFormacao", "Área de formação é obrigatória.");
 
-        if (vazio(req.cpf())) erros.put("cpf", "CPF é obrigatório.");
+        if (vazio(req.cpf())) {
+            erros.put("cpf", "CPF é obrigatório.");
+        } else if (!CpfValidator.isValid(req.cpf())) {
+            erros.put("cpf", "CPF inválido. Deve conter 11 dígitos numéricos.");
+        } else if (!CpfValidator.isUnique(req.cpf(), repository.readAll())) {
+            erros.put("cpf", "CPF já cadastrado no sistema.");
+        }
 
         if (vazio(req.email())) erros.put("email", "E-mail institucional é obrigatório.");
 
@@ -66,7 +73,7 @@ public class CadastroServidorService {
 
         Servidor s = new Servidor();
         s.setNomeCompleto(req.nomeCompleto().trim());
-        s.setCpf(req.cpf().trim());
+        s.setCpf(CpfValidator.normalizar(req.cpf()));
         s.setEmail(req.email().trim());
         s.setSenhaHash(req.senha());
         s.setCampus(req.campus().trim());

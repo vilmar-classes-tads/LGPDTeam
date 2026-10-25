@@ -2,6 +2,7 @@ package repository;
 
 import models.entities.Servidor;
 import org.springframework.stereotype.Repository;
+import validations.CpfValidator;
 
 import java.util.*;
 
@@ -19,8 +20,9 @@ public class ServidorRepository {
         }
 
         public Servidor read (String cpf){
+            String cpfLimpo = CpfValidator.normalizar(cpf);
             for (Servidor s : servidores){
-                if(s.getCpf().equals(cpf)){
+                if(s.getCpf() != null && CpfValidator.normalizar(s.getCpf()).equals(cpfLimpo)){
                     return s.selfReplicate();
                 }
             }
@@ -28,8 +30,9 @@ public class ServidorRepository {
         }
 
         public void update (Servidor serv){
+            String cpfLimpo = CpfValidator.normalizar(serv.getCpf());
             for (Servidor s : servidores){
-                if (s.getCpf().equals(serv.getCpf())){
+                if (s.getCpf() != null && CpfValidator.normalizar(s.getCpf()).equals(cpfLimpo)){
                     s.setEmail(serv.getEmail());
                     s.setNomeCompleto(serv.getNomeCompleto());
                     s.setSenhaHash(serv.getSenhaHash());
