@@ -6,7 +6,6 @@ import models.enums.Titulacao;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Servidor {
     private String nomeCompleto;
@@ -115,7 +114,13 @@ public class Servidor {
     }
 
     public void setPerfis(HashSet<Perfil> perfis) {
-        this.perfis = perfis;
+        this.perfis = perfis == null ? new HashSet<>() : new HashSet<>(perfis);
+    }
+
+    public void adicionarPerfil(Perfil perfil) {
+        if (perfil != null) {
+            this.perfis.add(perfil);
+        }
     }
 
     public Servidor selfReplicate() {
@@ -131,7 +136,7 @@ public class Servidor {
         r.setSexo(sexo);
         r.setLattes(lattes);
         r.setTelefone(telefone);
-        r.setPerfis(perfis);
+        r.setPerfis(new HashSet<>(perfis));
         return r;
     }
 }

@@ -4,6 +4,7 @@ import dto.CadastroServidorRequest;
 import dto.CadastroServidorResponse;
 import exceptions.ValidacaoException;
 import models.entities.Servidor;
+import models.enums.Perfil;
 import models.enums.Sexo;
 import models.enums.Titulacao;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import validations.EmailValidator;
 import validations.SenhaValidator;
 
 import java.text.Normalizer;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +105,11 @@ public class CadastroServidorService {
         if (!vazio(req.telefone())) {
             s.setTelefone(req.telefone().trim());
         }
+
+        HashSet<Perfil> perfisPadrao = new HashSet<>();
+        perfisPadrao.add(Perfil.ROLE_COORDENADOR);
+        perfisPadrao.add(Perfil.ROLE_AVALIADOR);
+        s.setPerfis(perfisPadrao);
 
         repository.inserir(s);
 
