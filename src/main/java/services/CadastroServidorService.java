@@ -9,6 +9,7 @@ import models.enums.Titulacao;
 import org.springframework.stereotype.Service;
 import repository.ServidorRepository;
 import validations.CpfValidator;
+import validations.EmailValidator;
 
 import java.text.Normalizer;
 import java.util.LinkedHashMap;
@@ -47,7 +48,13 @@ public class CadastroServidorService {
             erros.put("cpf", "CPF já cadastrado no sistema.");
         }
 
-        if (vazio(req.email())) erros.put("email", "E-mail institucional é obrigatório.");
+        if (vazio(req.email())) {
+            erros.put("email", "E-mail institucional é obrigatório.");
+        } else if (!EmailValidator.isValid(req.email())) {
+            erros.put("email", "E-mail institucional inválido.");
+        } else if (!EmailValidator.isUnique(req.email(), repository.readAll())) {
+            erros.put("email", "E-mail institucional já cadastrado no sistema.");
+        }
 
         if (vazio(req.senha())) erros.put("senha", "Senha é obrigatória.");
 
@@ -74,7 +81,7 @@ public class CadastroServidorService {
         Servidor s = new Servidor();
         s.setNomeCompleto(req.nomeCompleto().trim());
         s.setCpf(CpfValidator.normalizar(req.cpf()));
-        s.setEmail(req.email().trim());
+        s.setEmail(EmailValidator.normalizar(req.email()));
         s.setSenhaHash(req.senha());
         s.setCampus(req.campus().trim());
         s.setAreaFormacao(req.areaFormacao().trim());
