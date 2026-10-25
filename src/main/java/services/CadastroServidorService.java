@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import repository.ServidorRepository;
 import validations.CpfValidator;
 import validations.EmailValidator;
+import validations.SenhaValidator;
 
 import java.text.Normalizer;
 import java.util.LinkedHashMap;
@@ -56,7 +57,11 @@ public class CadastroServidorService {
             erros.put("email", "E-mail institucional já cadastrado no sistema.");
         }
 
-        if (vazio(req.senha())) erros.put("senha", "Senha é obrigatória.");
+        if (vazio(req.senha())) {
+            erros.put("senha", "Senha é obrigatória.");
+        } else if (!SenhaValidator.isValid(req.senha())) {
+            erros.put("senha", "A senha deve ter no mínimo 6 caracteres.");
+        }
 
         Titulacao titulacao = null;
         if (vazio(req.titulacao())) {
@@ -82,7 +87,7 @@ public class CadastroServidorService {
         s.setNomeCompleto(req.nomeCompleto().trim());
         s.setCpf(CpfValidator.normalizar(req.cpf()));
         s.setEmail(EmailValidator.normalizar(req.email()));
-        s.setSenhaHash(req.senha());
+        s.setSenhaHash(SenhaValidator.gerarHash(req.senha()));
         s.setCampus(req.campus().trim());
         s.setAreaFormacao(req.areaFormacao().trim());
         if (titulacao != null) {
