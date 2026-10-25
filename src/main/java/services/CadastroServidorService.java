@@ -22,6 +22,10 @@ import java.util.Map;
 @Service
 public class CadastroServidorService {
 
+    public static final String ROTA_LOGIN = "/login";
+    public static final String MENSAGEM_SUCESSO_CADASTRO =
+            "Cadastro realizado com sucesso! Faça login para acessar a plataforma.";
+
     private final ServidorRepository repository;
 
     public CadastroServidorService(ServidorRepository repository) {
@@ -114,7 +118,14 @@ public class CadastroServidorService {
         repository.inserir(s);
 
         return new CadastroServidorResponse(
-                s.getNomeCompleto(), s.getCpf(), s.getEmail(), s.getPerfis(), true, "Cadastro realizado.");
+                s.getNomeCompleto(),
+                s.getCpf(),
+                s.getEmail(),
+                s.getPerfis(),
+                true,
+                MENSAGEM_SUCESSO_CADASTRO,
+                ROTA_LOGIN
+        );
     }
 
     private static boolean vazio(String v) {
