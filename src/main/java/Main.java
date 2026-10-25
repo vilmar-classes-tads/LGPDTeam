@@ -2,6 +2,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import dto.CadastroServidorRequest;
 
+@SuppressWarnings("SpringBootApplicationSetup")
 @SpringBootApplication(scanBasePackages = {"dto", "models", "repository", "controllers", "services", "validations", "exceptions"})
 public class Main {
     public static void main(String[] args) {
