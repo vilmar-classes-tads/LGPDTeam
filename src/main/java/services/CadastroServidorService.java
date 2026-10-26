@@ -125,7 +125,7 @@ public class CadastroServidorService {
                 true,
                 MENSAGEM_SUCESSO_CADASTRO,
                 ROTA_LOGIN
-        );
+        )
     }
 
     private static boolean vazio(String v) {
