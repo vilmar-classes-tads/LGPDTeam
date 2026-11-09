@@ -21,6 +21,11 @@ public class ValidacaoException extends RuntimeException {
         this(Map.of(campo, mensagem));
     }
 
+    public ValidacaoException(String mensagem) {
+        super(mensagem);
+        this.campos = Collections.emptyMap();
+    }
+
     public Map<String, String> getCampos() {
         return campos;
     }
