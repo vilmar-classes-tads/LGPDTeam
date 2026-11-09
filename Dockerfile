@@ -1,9 +1,20 @@
+# ---------- Estágio 1: build com Maven ----------
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /build
+# Copia o pom.xml primeiro para aproveitar o cache das dependências
+COPY pom.xml .
+RUN mvn -B dependency:go-offline
+# Copia o código-fonte e gera o .jar
+COPY src ./src
+RUN mvn -B clean package -DskipTests
+
+# ---------- Estágio 2: imagem final (somente JRE) ----------
 # Usa uma imagem oficial do Java 17 (leve) como base
 FROM eclipse-temurin:17-jre-alpine
 # Define o diretório de trabalho dentro do container
 WORKDIR /app
-# Copia o arquivo .jar compilado pelo Maven para dentro do container
-# (O nome do arquivo .jar dependerá do pom.xml da equipe)
-COPY target/sistema-editais-1.0-SNAPSHOT.jar app.jar
+# Copia o .jar gerado no estágio de build (nome definido pelo pom.xml: artifactId-version.jar)
+COPY --from=build /build/target/dsc-0.0.1-SNAPSHOT.jar app.jar
+EXPOSE 8080
 # Comando que será executado quando o container iniciar
 ENTRYPOINT ["java", "-jar", "app.jar"]
