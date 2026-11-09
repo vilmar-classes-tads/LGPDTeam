@@ -9,7 +9,9 @@ import models.enums.Sexo;
 import models.enums.Titulacao;
 import org.springframework.stereotype.Service;
 import repository.ServidorRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import validations.CpfValidator;
+import validations.EmailValidator;
+import validations.SenhaValidator;
 
 import java.text.Normalizer;
 import java.util.HashSet;
@@ -20,7 +22,10 @@ import java.util.Map;
 @Service
 public class CadastroServidorService {
 
-    private static final BCryptPasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+    public static final String ROTA_LOGIN = "/login";
+    public static final String MENSAGEM_SUCESSO_CADASTRO =
+            "Cadastro realizado com sucesso! Faça login para acessar a plataforma.";
+
     private final ServidorRepository repository;
 
     public CadastroServidorService(ServidorRepository repository) {
@@ -42,13 +47,25 @@ public class CadastroServidorService {
         if (vazio(req.campus()))       erros.put("campus", "Campus é obrigatório.");
         if (vazio(req.areaFormacao())) erros.put("areaFormacao", "Área de formação é obrigatória.");
 
-        if (vazio(req.cpf())) erros.put("cpf", "CPF é obrigatório.");
+        if (vazio(req.cpf())) {
+            erros.put("cpf", "CPF é obrigatório.");
+        } else if (!CpfValidator.isValid(req.cpf())) {
+            erros.put("cpf", "CPF inválido. Deve conter 11 dígitos numéricos.");
+        } else if (!CpfValidator.isUnique(req.cpf(), repository.readAll())) {
+            erros.put("cpf", "CPF já cadastrado no sistema.");
+        }
 
-        if (vazio(req.email())) erros.put("email", "E-mail institucional é obrigatório.");
+        if (vazio(req.email())) {
+            erros.put("email", "E-mail institucional é obrigatório.");
+        } else if (!EmailValidator.isValid(req.email())) {
+            erros.put("email", "E-mail institucional inválido.");
+        } else if (!EmailValidator.isUnique(req.email(), repository.readAll())) {
+            erros.put("email", "E-mail institucional já cadastrado no sistema.");
+        }
 
         if (vazio(req.senha())) {
             erros.put("senha", "Senha é obrigatória.");
-        } else if (req.senha().length() < 6) {
+        } else if (!SenhaValidator.isValid(req.senha())) {
             erros.put("senha", "A senha deve ter no mínimo 6 caracteres.");
         }
 
@@ -59,6 +76,8 @@ public class CadastroServidorService {
             titulacao = converterEnum(Titulacao.class, req.titulacao());
             if (titulacao == null) erros.put("titulacao", "Titulação inválida.");
         }
+
+        //Precisa verificar se o ajuste de Titulação para Lista modifica algo em como o dto lida com o dado na persistência
 
         Sexo sexo = null;
         if (!vazio(req.sexo())) {
@@ -72,9 +91,9 @@ public class CadastroServidorService {
 
         Servidor s = new Servidor();
         s.setNomeCompleto(req.nomeCompleto().trim());
-        s.setCpf(req.cpf().trim());
-        s.setEmail(req.email().trim());
-        s.setSenhaHash(PASSWORD_ENCODER.encode(req.senha()));
+        s.setCpf(CpfValidator.normalizar(req.cpf()));
+        s.setEmail(EmailValidator.normalizar(req.email()));
+        s.setSenhaHash(SenhaValidator.gerarHash(req.senha()));
         s.setCampus(req.campus().trim());
         s.setAreaFormacao(req.areaFormacao().trim());
         if (titulacao != null) {
@@ -90,15 +109,23 @@ public class CadastroServidorService {
         if (!vazio(req.telefone())) {
             s.setTelefone(req.telefone().trim());
         }
-        s.setPerfis(new HashSet<>(List.of(Perfil.ROLE_COORDENADOR, Perfil.ROLE_AVALIADOR)));
 
-        Map<String, String> errosUnicidade = repository.inserirSeUnico(s);
-        if (!errosUnicidade.isEmpty()) {
-            throw new ValidacaoException(errosUnicidade);
-        }
+        HashSet<Perfil> perfisPadrao = new HashSet<>();
+        perfisPadrao.add(Perfil.ROLE_COORDENADOR);
+        perfisPadrao.add(Perfil.ROLE_AVALIADOR);
+        s.setPerfis(perfisPadrao);
+
+        repository.inserir(s);
 
         return new CadastroServidorResponse(
-                s.getNomeCompleto(), s.getCpf(), s.getEmail(), s.getPerfis(), true, "Cadastro realizado.");
+                s.getNomeCompleto(),
+                s.getCpf(),
+                s.getEmail(),
+                s.getPerfis(),
+                true,
+                MENSAGEM_SUCESSO_CADASTRO,
+                ROTA_LOGIN
+        );
     }
 
     private static boolean vazio(String v) {
